@@ -1,78 +1,50 @@
-import React from 'react';
-import {
-    oneOf,
-    bool,
-    shape,
-    node,
-    oneOfType,
-    string,
-    number,
-    func
-} from 'prop-types';
-import RadioButtonGroup from './radio-button-group';
-import RadioBase from './radio-base';
+import React, { Fragment } from 'react';
+import { string } from 'prop-types';
+import classNames from 'classnames';
 
-const RadioSwitch = (props) => {
+import BaseRadioButton from './BaseRadioButton';
+
+const RadioSwitch = props => {
     const {
-        'aria-invalid': ariaInvalid,
-        firstOption,
-        invalid,
-        lastOption,
-        value,
+        className,
+        leftLabel,
+        leftValue,
+        rightLabel,
+        rightValue,
         ...rest
     } = props;
 
     return (
-        <RadioButtonGroup inline={true} {...rest}>
-            <RadioBase
-                aria-invalid={ariaInvalid}
-                checked={value === firstOption.value}
-                invalid={invalid}
-                label={firstOption.label}
-                labelClasses="ffe-radio-switch"
-                value={firstOption.value}
-                style={ { marginRight: '5px' } }
-            />
-            <RadioBase
-                aria-invalid={ariaInvalid}
-                checked={value === lastOption.value}
-                invalid={invalid}
-                label={lastOption.label}
-                labelClasses="ffe-radio-switch"
-                value={lastOption.value}
-            />
-        </RadioButtonGroup>
+        <Fragment>
+            <BaseRadioButton
+                className={classNames('ffe-radio-switch', className)}
+                value={leftValue}
+                {...rest}
+            >
+                {leftLabel}
+            </BaseRadioButton>
+            <BaseRadioButton
+                className={classNames('ffe-radio-switch', className)}
+                value={rightValue}
+                {...rest}
+            >
+                {rightLabel}
+            </BaseRadioButton>
+        </Fragment>
     );
 };
 
 RadioSwitch.propTypes = {
-    'aria-invalid': oneOf(['true', 'false', true, false]),
-    disabled: bool,
-    firstOption: shape({
-        label: node.isRequired,
-        value: oneOfType([
-            string,
-            number,
-            bool
-        ]).isRequired,
-    }).isRequired,
-    invalid: oneOf(['true', 'false', true, false]),
-    label: string,
-    lastOption: shape({
-        label: node.isRequired,
-        value: oneOfType([
-            string,
-            number,
-            bool
-        ]).isRequired,
-    }).isRequired,
-    name: string,
-    onChange: func,
-    value: oneOfType([
-        string,
-        number,
-        bool
-    ]),
+    /** Additional class names applied to both radio buttons */
+    className: string,
+    /** The label of the choice to the left */
+    leftLabel: string.isRequired,
+    /** The value of the choice to the left */
+    leftValue: string.isRequired,
+    /** The label of the choice to the right */
+    rightLabel: string.isRequired,
+    /** The value of the choice to the right */
+    rightValue: string.isRequired,
 };
 
 export default RadioSwitch;

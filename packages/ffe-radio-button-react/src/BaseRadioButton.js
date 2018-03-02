@@ -5,67 +5,49 @@ import uuid from 'uuid';
 
 import { Tooltip } from '@sb1/ffe-form-react';
 
-export const buttonType = {
-    REGULAR: 'regular',
-    SWITCH: 'switch',
-};
-
 class BaseRadioButton extends Component {
-    id = uuid.v4();
+    id = `base-radio-button-${uuid.v4()}`;
 
     render() {
         const {
             'aria-invalid': ariaInvalid,
             children,
-            inline,
-            className: inputClassName,
-            labelProps: {
-                className: labelClassName,
-                ...labelProps
-            },
-            name,
+            checked,
+            className,
+            labelProps,
+            selectedValue,
             tooltip,
             tooltipProps,
-            type,
             value,
             ...inputProps
         } = this.props;
 
-        const isRegular = type === buttonType.REGULAR;
-        const isSwitch = type === buttonType.SWITCH;
-
         const labelClasses = classNames(
-            { 'ffe-radio-button':  isRegular },
-            { 'ffe-radio-button--inline': isRegular && inline },
-            { 'ffe-radio-switch': isSwitch },
             { 'ffe-radio-button--invalid': ariaInvalid === 'true' },
             { 'ffe-radio-button--with-tooltip': tooltip },
-            labelClassName,
+            className,
         );
+
+        const isSelected = checked || selectedValue === value;
 
         return (
             <Fragment>
                 <input
                     aria-invalid={ariaInvalid}
-                    className={classNames(
-                        'ffe-radio-input', 
-                        inputClassName,
-                    )}
+                    className="ffe-radio-input"
                     id={this.id}
-                    name={name}
                     type="radio"
+                    checked={isSelected}
                     value={value}
                     {...inputProps}
                 />
-                {children && 
-                    <label 
-                        className={labelClasses} 
-                        htmlFor={this.id} 
-                        {...labelProps}
-                    >
-                        {children}
-                    </label>
-                }
+                <label 
+                    htmlFor={this.id} 
+                    {...labelProps}
+                    className={labelClasses} 
+                >
+                    {children}
+                </label>
                 {tooltip && 
                     <Tooltip {...tooltipProps}>
                         {tooltip}
@@ -76,18 +58,31 @@ class BaseRadioButton extends Component {
     }
 }
 
+BaseRadioButton.defaultProps = {
+    labelProps: {},
+    tooltipProps: {},
+};
+
 BaseRadioButton.propTypes = {
+    /** Indicates whether the radio button is invalid or not */
     'aria-invalid': oneOf(['true', 'false']),
-    children: node,
+    /** Whether or not the radio button is selected */
+    checked: bool,
+    /** The label of the radio button */
+    children: node.isRequired,
+    /** Additional class names applied to the label */
     className: string,
-    inline: bool,
-    labelProps: shape({
-        className: string,
-    }),
+    /** Additional props passed to the label element */
+    labelProps: shape({}),
+    /** The name of the radio button */
     name: string.isRequired,
+    /** The selected value of the radio button set */
+    selectedValue: string,
+    /** Tooltip providing further detail about the choice */
     tooltip: string,
+    /** Additional props passed to the Tooltip component */
     tooltipProps: shape({}),
-    type: oneOf(Object.values(buttonType)).isRequired,
+    /** The value of the radio button */
     value: string.isRequired,
 };
 
